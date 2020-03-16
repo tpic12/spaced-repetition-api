@@ -28,7 +28,7 @@ VALUES
   (5, 1, 'pinguino', 'penguin', 6),
   (6, 1, 'tortuga', 'turlte', 7),
   (7, 1, 'leon', 'lion', 8),
-  (8, 1, 'ballena', 'whale', 9)
+  (8, 1, 'ballena', 'whale', 9),
   (9, 1, 'tiburon', 'shark', 10),
   (10, 1, 'mono', 'monkey', null);
 
