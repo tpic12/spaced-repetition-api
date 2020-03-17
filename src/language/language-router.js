@@ -2,9 +2,11 @@ const express = require('express')
 const LanguageService = require('./language-service')
 const { requireAuth } = require('../middleware/jwt-auth')
 const Queue = require('../middleware/queue')
+const LinkedList = require('../middleware/linkedlist')
 
 const languageRouter = express.Router()
 const wordsQ = new Queue()
+const wordsList = new LinkedList()
 
 languageRouter
   .use(requireAuth)
@@ -47,7 +49,7 @@ languageRouter
 
 languageRouter
   .get('/head', async (req, res, next) => {
-    await LanguageService.getNextHead(req.app.get('db'), req.language.id,)
+    await LanguageService.getNextHead(req.app.get('db'), req.language.id)
     .then(arr => {
       arr.map(word => wordsQ.enqueue(word))
       res.json(wordsQ.show())
@@ -58,6 +60,7 @@ languageRouter
 languageRouter
   .post('/guess', async (req, res, next) => {
     // implement me
+    await LanguageService.
     res.send('implement me!')
   })
 

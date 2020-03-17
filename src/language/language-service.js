@@ -41,6 +41,8 @@ const LanguageService = {
     .join("language", "word.language_id", '=', 'language.id' )
     .where({ language_id })
   }
+
+  
 }
 
 module.exports = LanguageService
