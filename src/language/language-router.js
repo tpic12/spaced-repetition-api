@@ -1,12 +1,11 @@
 const express = require('express')
 const LanguageService = require('./language-service')
 const { requireAuth } = require('../middleware/jwt-auth')
-const Queue = require('../middleware/queue')
-const LinkedList = require('../middleware/linkedlist')
+const LinkedList = require('../middleware/linkedList')
 
 const languageRouter = express.Router()
-const wordsQ = new Queue()
 const wordsList = new LinkedList()
+const jsonBodyParser = express.json()
 
 languageRouter
   .use(requireAuth)
@@ -51,17 +50,24 @@ languageRouter
   .get('/head', async (req, res, next) => {
     await LanguageService.getNextHead(req.app.get('db'), req.language.id)
     .then(arr => {
-      arr.map(word => wordsQ.enqueue(word))
-      res.json(wordsQ.show())
+      arr.map(word => wordsList.insertLast(word))
+      res.json(wordsList.head)
     })
     .catch(next)
   })
-
+//compareToAnswer
 languageRouter
-  .post('/guess', async (req, res, next) => {
+  .post('/guess', jsonBodyParser, async (req, res, next) => {
     // implement me
-    await LanguageService.
-    res.send('implement me!')
+    const {guess} = req.body
+    await LanguageService.getAnswer(req.app.get('db'), req.language.id)
+    .then(ans => {
+      LanguageService.compareToAnswer(guess, ans[0])
+      .then(newAns => {
+        console.log('newAns: ', newAns)
+      })
+    })
+    .catch(next)
   })
 
 module.exports = languageRouter

@@ -40,9 +40,34 @@ const LanguageService = {
     )
     .join("language", "word.language_id", '=', 'language.id' )
     .where({ language_id })
-  }
+  },
 
-  
+  getAnswer(db, language_id) {
+    return db
+    .from('word')
+    .select(
+      'word.translation',
+      'word.memory_value',
+      'word.correct_count',
+      'word.incorrect_count',
+      'language.total_score'
+    )
+    .join("language", "word.language_id", '=', 'language.id' )
+    .where({ language_id })
+  },
+
+  compareToAnswer(guess, ans) {
+    let guessLC = guess.toLowerCase()
+    let newAns = ans
+    
+    if(guessLC === ans.translation){
+      newAns.memory_value+2
+    }
+    else {
+      newAns.memory_value = 1
+    }
+    return newAns
+  }
 }
 
 module.exports = LanguageService

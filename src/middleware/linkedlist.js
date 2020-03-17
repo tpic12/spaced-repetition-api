@@ -50,7 +50,7 @@ class LinkedList {
     }
     let tempNode = this.head;
     while (tempNode !== null) {
-      if (currNode.next === null) {
+      if (tempNode.next === null) {
         return null;
       }
       tempNode = tempNode.next;
@@ -104,7 +104,6 @@ class LinkedList {
     }
     previousNode.next = currNode.next;
   }
-  //insertAt
 }
 
 module.exports=LinkedList
