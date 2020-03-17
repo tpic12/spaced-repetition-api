@@ -33,13 +33,10 @@ const LanguageService = {
     return db
     .from('word')
     .select(
-      'word.id',
-      'word.language_id',
-      'word.original',
-      'word.next',
-      'word.correct_count',
-      'word.incorrect_count',
-      "language.total_score",
+      'word.original as nextWord',
+      'word.correct_count as wordCorrectCount',
+      'word.incorrect_count as wordIncorrectCount',
+      "language.total_score as totalScore",
     )
     .join("language", "word.language_id", '=', 'language.id' )
     .where({ language_id })
