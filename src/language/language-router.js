@@ -1,8 +1,10 @@
 const express = require('express')
 const LanguageService = require('./language-service')
 const { requireAuth } = require('../middleware/jwt-auth')
+const Queue = require('../middleware/queue')
 
 const languageRouter = express.Router()
+const wordsQ = new Queue()
 
 languageRouter
   .use(requireAuth)
@@ -45,8 +47,12 @@ languageRouter
 
 languageRouter
   .get('/head', async (req, res, next) => {
-    // implement me
-    res.send('implement me!')
+    await LanguageService.getNextHead(req.app.get('db'), req.language.id,)
+    .then(arr => {
+      arr.map(word => wordsQ.enqueue(word))
+      res.json(wordsQ.show())
+    })
+    .catch(next)
   })
 
 languageRouter
