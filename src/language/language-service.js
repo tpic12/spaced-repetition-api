@@ -95,6 +95,16 @@ const LanguageService = {
    .update({
     total_score:newAns.totalScore
     })
+  },
+
+  changeWord(list, newAns) {
+    const {memory_value} = newAns //places to move --> integer
+
+    for(let i=1; i < memory_value; i++){
+      list.head = list.head.next
+    }
+    newAns.ne = this.head.next
+    this.head.next = newAns.nextWord
   }
 
 

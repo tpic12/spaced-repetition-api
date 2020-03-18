@@ -48,12 +48,16 @@ languageRouter
 
 languageRouter
   .get('/head', async (req, res, next) => {
+    wordsList.head = null
     await LanguageService.getNextHead(req.app.get('db'), req.language.id)
     .then(arr => {
+      console.log('arr: ', arr)
       arr.map(word => wordsList.insertLast(word))
       res.json(wordsList.head.value)
     })
     .catch(next)
+    console.log('before wordsList: ')
+    wordsList.display()
   })
 //compareToAnswer
 languageRouter
@@ -63,11 +67,27 @@ languageRouter
     const {guess} = req.body
     const answer= await LanguageService.getAnswer(req.app.get('db'), req.language.id)
     
+    
     const newAns= await  LanguageService.compareToAnswer(guess, answer[0])
       //console.log('new Ans',newAns)
       await LanguageService.updateWordScore(req.app.get('db'), req.language.id, newAns)
       await LanguageService.updateLanguageScore(req.app.get('db'), req.language.id, newAns)
-      await LanguageService.changeWord(req.app.get('db'), req.language.id, ) //we are here
+      // await LanguageService.changeWord(wordsList, newAns) //we are here
+      const {memory_value} = newAns //places to move --> integer
+      console.log('memory_value: ', memory_value)
+      const newNode = {
+        nextWord: wordsList.head.value.nextWord,//original word
+        wordCorrectCount: newAns.wordCorrectCount,
+        wordIncorrectCount: newAns.wordIncorrectCount,
+        totalScore: newAns.totalScore
+      };
+      console.log('newNode: ', newNode)
+      wordsList.insertAt(newNode, wordsList, memory_value)
+      wordsList.remove(wordsList.head.value)
+      console.log('after wordsList: ')
+      wordsList.display()
+      // console.log('newAsns: ', newAns)
+
       res.status(200).json(newAns)
       next()
   }
