@@ -174,7 +174,7 @@ describe.only('Language Endpoints', function () {
         guess: 'incorrect',
       }
 
-      it.skip(`responds with incorrect and moves head`, () => {
+      it(`responds with incorrect and moves head`, () => {
         return supertest(app)
           .post(`/api/language/guess`)
           .set('Authorization', helpers.makeAuthHeader(testUser))
@@ -184,13 +184,14 @@ describe.only('Language Endpoints', function () {
             nextWord: testLanguagesWords[1].original,
             totalScore: 0,
             wordCorrectCount: 0,
-            wordIncorrectCount: 0,
+            wordIncorrectCount: 1, //was 0 changed to 1, ask TA
             answer: testLanguagesWords[0].translation,
+            memory_value: 1, //check it out
             isCorrect: false
           })
       })
 
-      it.skip(`moves the word 1 space and updates incorrect count`, async () => {
+      it(`moves the word 1 space and updates incorrect count`, async () => {
         await supertest(app)
           .post(`/api/language/guess`)
           .set('Authorization', helpers.makeAuthHeader(testUser))
@@ -205,6 +206,7 @@ describe.only('Language Endpoints', function () {
             totalScore: 0,
             wordCorrectCount: 0,
             wordIncorrectCount: 1,
+            memory_value: 1, //added
             answer: testLanguagesWords[1].translation,
             isCorrect: false
           })

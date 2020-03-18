@@ -46,60 +46,54 @@ const LanguageService = {
     return db
     .from('word')
     .select(
-      'word.translation',
+      'word.translation as answer',
       'word.memory_value',
-      'word.correct_count',
-      'word.incorrect_count',
-      'word.original',
-      'language.total_score'
+      'word.correct_count as wordCorrectCount',
+      'word.incorrect_count as wordIncorrectCount',
+      'w.original as nextWord',
+      'language.total_score as totalScore'
     )
     .join("language", "word.language_id", '=', 'language.id' )
-    .where({ language_id })
+    .join('word as w', 'word.next', '=', 'w.id')
+    .where(`word.language_id`, '=', `${language_id}`)
   },
 
   compareToAnswer(guess, ans) {
     let guessLC = guess.toLowerCase()
     let newAns = ans
     
-    if(guessLC === ans.translation){
-      newAns.memory_value =newAns.memory_value * 2
+    if(guessLC === ans.answer){
+      newAns.memory_value = newAns.memory_value * 2
       newAns.isCorrect=true
-      ++newAns.correct_count
-      ++newAns.total_score
-      
+      ++newAns.wordCorrectCount
+      ++newAns.totalScore
     }
     else {
       newAns.memory_value = 1
       newAns.isCorrect=false
-      ++newAns.incorrect_count
+      newAns.wordIncorrectCount = newAns.wordIncorrectCount + 1
     }
     return newAns
   },
 
-  updateWordScore(db,language_id, newAns){
-    return
-    db("word")
-    .where({original:newAns.original,
+  updateWordScore(db,language_id, newAns) {
+    return db
+    .from('word')
+    .update({
+      memory_value:newAns.memory_value,
+      correct_count:newAns.wordCorrectCount,
+      incorrect_count:newAns.wordIncorrectCount
+    })
+    .where({
+      original:newAns.nextWord,
       language_id
     })
-    .update({
-    memory_value:newAns.memory_value,
-    correct_count:newAns.correct_count,
-    incorrect_count:newAns.incorrect_count
-    
-
-  })
-  
-  
-  
- 
-    
   },
   updateLanguageScore(db,language_id, newAns){
     db("language")
     .where({id:language_id})
    .update({
-    total_score:newAns.total_score
+    total_score:newAns.totalScore
     })
   }
 

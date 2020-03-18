@@ -51,7 +51,7 @@ languageRouter
     await LanguageService.getNextHead(req.app.get('db'), req.language.id)
     .then(arr => {
       arr.map(word => wordsList.insertLast(word))
-      res.json(wordsList.head)
+      res.json(wordsList.head.value)
     })
     .catch(next)
   })
@@ -59,20 +59,18 @@ languageRouter
 languageRouter
   .post('/guess', jsonBodyParser, async (req, res, next) => {
     
-    try{
+  try{
     const {guess} = req.body
-  const answer= await LanguageService.getAnswer(req.app.get('db'), req.language.id)
+    const answer= await LanguageService.getAnswer(req.app.get('db'), req.language.id)
     
-   const newAns= await  LanguageService.compareToAnswer(guess, answer[0])
-      console.log('new Ans',newAns)
-await LanguageService.updateWordScore(req.app.get('db'),req.language.id, newAns)
-await LanguageService.updateLanguageScore(req.app.get('db'),req.language.id, newAns)
+    const newAns= await  LanguageService.compareToAnswer(guess, answer[0])
+      //console.log('new Ans',newAns)
+      await LanguageService.updateWordScore(req.app.get('db'), req.language.id, newAns)
+      await LanguageService.updateLanguageScore(req.app.get('db'), req.language.id, newAns)
+      await LanguageService.changeWord(req.app.get('db'), req.language.id, ) //we are here
       res.status(200).json(newAns)
       next()
-
-
-
-    }
+  }
     catch (error) {
       next(error)
     }
