@@ -59,15 +59,24 @@ languageRouter
 languageRouter
   .post('/guess', jsonBodyParser, async (req, res, next) => {
     // implement me
+    try{
     const {guess} = req.body
-    await LanguageService.getAnswer(req.app.get('db'), req.language.id)
-    .then(ans => {
-      LanguageService.compareToAnswer(guess, ans[0])
-      .then(newAns => {
-        console.log('newAns: ', newAns)
-      })
-    })
-    .catch(next)
+  const answer= await LanguageService.getAnswer(req.app.get('db'), req.language.id)
+    
+   const newAns= await  LanguageService.compareToAnswer(guess, answer[0])
+      console.log('new Ans',newAns)
+
+      res.status(200).json(newAns)
+      next()
+
+
+
+    }
+    catch (error) {
+      next(error)
+    }
+
+  
   })
 
 module.exports = languageRouter

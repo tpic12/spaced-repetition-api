@@ -61,10 +61,16 @@ const LanguageService = {
     let newAns = ans
     
     if(guessLC === ans.translation){
-      newAns.memory_value+2
+      newAns.memory_value =newAns.memory_value * 2
+      newAns.isCorrect=true
+      ++newAns.correct_count
+      ++newAns.total_score
+      
     }
     else {
       newAns.memory_value = 1
+      newAns.isCorrect=false
+      ++newAns.incorrect_count
     }
     return newAns
   }
