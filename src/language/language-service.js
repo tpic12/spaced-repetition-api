@@ -50,6 +50,7 @@ const LanguageService = {
       'word.memory_value',
       'word.correct_count',
       'word.incorrect_count',
+      'word.original',
       'language.total_score'
     )
     .join("language", "word.language_id", '=', 'language.id' )
@@ -73,7 +74,36 @@ const LanguageService = {
       ++newAns.incorrect_count
     }
     return newAns
+  },
+
+  updateWordScore(db,language_id, newAns){
+    return
+    db("word")
+    .where({original:newAns.original,
+      language_id
+    })
+    .update({
+    memory_value:newAns.memory_value,
+    correct_count:newAns.correct_count,
+    incorrect_count:newAns.incorrect_count
+    
+
+  })
+  
+  
+  
+ 
+    
+  },
+  updateLanguageScore(db,language_id, newAns){
+    db("language")
+    .where({id:language_id})
+   .update({
+    total_score:newAns.total_score
+    })
   }
+
+
 }
 
 module.exports = LanguageService

@@ -58,14 +58,15 @@ languageRouter
 //compareToAnswer
 languageRouter
   .post('/guess', jsonBodyParser, async (req, res, next) => {
-    // implement me
+    
     try{
     const {guess} = req.body
   const answer= await LanguageService.getAnswer(req.app.get('db'), req.language.id)
     
    const newAns= await  LanguageService.compareToAnswer(guess, answer[0])
       console.log('new Ans',newAns)
-
+await LanguageService.updateWordScore(req.app.get('db'),req.language.id, newAns)
+await LanguageService.updateLanguageScore(req.app.get('db'),req.language.id, newAns)
       res.status(200).json(newAns)
       next()
 
