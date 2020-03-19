@@ -97,7 +97,7 @@ class LinkedList {
     }
   }
 
-  insertAt(item, list, desiredPosition) {
+  insertAt(item, list, desiredPosition) {//desired = 16
     //console.log('insert at is running')
         if (list.head === null) {
             this.insertFirst(item)
@@ -106,8 +106,12 @@ class LinkedList {
         let position = 0;
         let tempNode = list.head
         while(desiredPosition !== position) {
-            tempNode = tempNode.next
-            position++
+          if(tempNode.next === null){
+            this.insertLast(item)
+          } 
+          tempNode = tempNode.next
+          position++
+        
         }
         this.insertAfter(item, tempNode.value, list)
   }

@@ -43,7 +43,7 @@ function makeLanguagesAndWords(user) {
   const languages = [
     {
       id: 1,
-      name: 'Test language 1',
+      name: 'Test language one',
       user_id: user.id,
     },
   ]
@@ -51,36 +51,36 @@ function makeLanguagesAndWords(user) {
   const words = [
     {
       id: 1,
-      original: 'original 1',
-      translation: 'translation 1',
+      original: 'original one',
+      translation: 'translation one',
       language_id: 1,
       next: 2,
     },
     {
       id: 2,
-      original: 'original 2',
-      translation: 'translation 2',
+      original: 'original two',
+      translation: 'translation two',
       language_id: 1,
       next: 3,
     },
     {
       id: 3,
-      original: 'original 3',
-      translation: 'translation 3',
+      original: 'original three',
+      translation: 'translation three',
       language_id: 1,
       next: 4,
     },
     {
       id: 4,
-      original: 'original 4',
-      translation: 'translation 4',
+      original: 'original four',
+      translation: 'translation four',
       language_id: 1,
       next: 5,
     },
     {
       id: 5,
-      original: 'original 5',
-      translation: 'translation 5',
+      original: 'original five',
+      translation: 'translation five',
       language_id: 1,
       next: null,
     },

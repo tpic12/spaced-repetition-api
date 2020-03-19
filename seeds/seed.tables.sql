@@ -26,7 +26,7 @@ VALUES
   (3, 1, 'arana', 'spider', 4),
   (4, 1, 'caballo', 'horse', 5),
   (5, 1, 'pinguino', 'penguin', 6),
-  (6, 1, 'tortuga', 'turlte', 7),
+  (6, 1, 'tortuga', 'turtle', 7),
   (7, 1, 'leon', 'lion', 8),
   (8, 1, 'ballena', 'whale', 9),
   (9, 1, 'tiburon', 'shark', 10),

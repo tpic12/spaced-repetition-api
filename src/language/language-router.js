@@ -48,16 +48,51 @@ languageRouter
 
 languageRouter
   .get('/head', async (req, res, next) => {
-    wordsList.head = null
+    const user_id = req.user.id
+    //console.log('user', req.user)
     try {
-    const arr = await LanguageService.getNextHead(req.app.get('db'), req.language.id)
-      //console.log('arr: ', arr)
+      wordsList.head = null
+      const head = await LanguageService.getHead(req.app.get('db'), req.language.id, user_id)
+      //const words = await LanguageService.getWordsInOrder(req.app.get('db'), req.language.id, user_id, head)
+      // arr.map(word => wordsList.insertLast(word))
+      let arr=[];
+      arr.push(head[0]);
+      //console.log('head: ', head[0].wordAfter)
+      for(let i=0; i<9; i++) {
+        if(arr[i].wordAfter !== null){
+        let value = await LanguageService.getWordsInOrder(req.app.get('db'), arr[i].wordAfter)
+        arr.push(value[0])
+        //console.log('value: ', value)
+        }
+        else {
+          break;
+        }
+      }
+      //console.log("arr: ", arr)
       arr.map(word => wordsList.insertLast(word))
-      res.json(wordsList.head.value)
+
+      res.json({
+        nextWord: head[0].nextWord,
+        wordCorrectCount: head[0].wordCorrectCount,
+        wordIncorrectCount: head[0].wordIncorrectCount,
+        totalScore: head[0].totalScore
+      })
       next()
     } catch(error) {
       next(error)
     }
+    
+
+    // wordsList.head = null
+    // try {
+    // const arr = await LanguageService.populateLinkedList(req.app.get('db'), req.language.id)
+    //   //console.log('arr: ', arr)
+    //   arr.map(word => wordsList.insertLast(word))
+    //   res.json(wordsList.head.value)
+    //   next()
+    // } catch(error) {
+    //   next(error)
+    // }
   })
 //compareToAnswer
 languageRouter
@@ -69,12 +104,13 @@ languageRouter
       })
     }
     const {guess} = req.body
-    const answer= await LanguageService.getAnswer(req.app.get('db'), req.language.id)
-    const newAns= await  LanguageService.compareToAnswer(guess, answer[0])
+    const answerArr= await LanguageService.getHeadAnswer(req.app.get('db'), req.language.id)
+    const newAns= await  LanguageService.compareToAnswer(guess, answerArr[0])
       
-      LanguageService.updateWordScore(req.app.get('db'), req.language.id, newAns)
-      LanguageService.updateLanguageScore(req.app.get('db'), req.language.id, newAns)
-      //await LanguageService.changeWord(wordsList, newAns) //we are here
+      await LanguageService.updateWordScore(req.app.get('db'), req.language.id, newAns)
+      await LanguageService.updateLanguageScore(req.app.get('db'), req.language.id, newAns)
+      //await LanguageService.changeWord(wordsList, newAns)
+      //console.log('new Ans: ',newAns)
       const {memory_value} = newAns //places to move --> integer
       //console.log('head: ', wordsList.head)
       const newNode = {
@@ -84,10 +120,11 @@ languageRouter
         totalScore: newAns.totalScore
       };
       //console.log('newNode: ', newNode)
-      //console.log('new Ans before moving',newAns)
+      
       wordsList.insertAt(newNode, wordsList, memory_value)
       wordsList.remove(wordsList.head.value)
-      //console.log('new Ans after moving', wordsList.find('elefante'))
+      await LanguageService.moveHead(req.app.get('db'), req.language.id, req.user.id, wordsList.head.value.nextWord)
+      // console.log('newHead: ', wordsList.head.value.nextWord)
       //map through words list out here, running updateWords for each word...
       while(wordsList.head.next !== null) {
         await LanguageService.updateWordPosition(req.app.get('db'), req.language.id, wordsList.head.value.nextWord, wordsList.head.next.value.nextWord)
@@ -96,9 +133,9 @@ languageRouter
     
       //console.log('after wordsList =======================')
       //wordsList.display()
-      // console.log('newAsns: ', newAns)
-      const sendBack = wordsList.find(`${newNode.nextWord}`)
-      res.status(200).json(sendBack)
+      //console.log('newAsns: ', newAns)
+      //const sendBack = newNode.nextWord
+      res.status(200).json(newAns)
       next()
   }
     catch (error) {
