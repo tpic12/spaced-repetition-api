@@ -46,11 +46,11 @@ const LanguageService = {
     return db
     .from('word')
     .select(
-      'word.translation as answer',
+      'word.translation as answer', //are these sqitch w for word?
       'word.memory_value',
       'word.correct_count as wordCorrectCount',
       'word.incorrect_count as wordIncorrectCount',
-      'w.original as nextWord',
+      'w.original as nextWord', //are these sqitch w for word?
       'language.total_score as totalScore'
     )
     .join("language", "word.language_id", '=', 'language.id' )
@@ -96,18 +96,21 @@ const LanguageService = {
     total_score:newAns.totalScore
     })
   },
-
-  changeWord(list, newAns) {
-    const {memory_value} = newAns //places to move --> integer
-
-    for(let i=1; i < memory_value; i++){
-      list.head = list.head.next
-    }
-    newAns.ne = this.head.next
-    this.head.next = newAns.nextWord
+  updateWordPosition(db, language_id, currentWord, nextWord) {
+    return db.raw(
+      `update word set "next" = (select id from word w where w.original = '${nextWord}' and w.language_id = ${language_id}) where word.language_id = ${language_id} and original = '${currentWord}'`
+    )
   }
 
+  // changeWord(list, newAns) {
+  //   const {memory_value} = newAns //places to move --> integer
 
+  //   for(let i=1; i < memory_value; i++){
+  //     list.head = list.head.next
+  //   }
+  //   newAns.next = this.head.next
+  //   this.head.next = newAns.nextWord
+  // }
 }
 
 module.exports = LanguageService

@@ -4,6 +4,7 @@ class _Node {
         this.next = next;
     }
 }
+
 class LinkedList {
   constructor() {
     this.head = null;
@@ -53,7 +54,7 @@ class LinkedList {
         let current = list.head
         let previous = list.head
         while (current.value !== desiredNode) {
-           console.log('this is current', current)
+           //console.log('this is current', current)
            previous = current;
            current = current.next; 
         }
@@ -97,18 +98,18 @@ class LinkedList {
   }
 
   insertAt(item, list, desiredPosition) {
-    console.log('insert at is running')
+    //console.log('insert at is running')
         if (list.head === null) {
             this.insertFirst(item)
         }
 
-        let position = 1;
+        let position = 0;
         let tempNode = list.head
         while(desiredPosition !== position) {
             tempNode = tempNode.next
             position++
         }
-        this.insertBefore(item, tempNode.value, list)
+        this.insertAfter(item, tempNode.value, list)
   }
 
   find(item) {
@@ -116,7 +117,7 @@ class LinkedList {
     if (!this.head) {
       return null;
     }
-    while (currNode.value !== item) {
+    while (currNode.value.nextWord !== item) {
       if (currNode.next === null) {
         return null;
       } else {

@@ -49,53 +49,61 @@ languageRouter
 languageRouter
   .get('/head', async (req, res, next) => {
     wordsList.head = null
-    await LanguageService.getNextHead(req.app.get('db'), req.language.id)
-    .then(arr => {
-      console.log('arr: ', arr)
+    try {
+    const arr = await LanguageService.getNextHead(req.app.get('db'), req.language.id)
+      //console.log('arr: ', arr)
       arr.map(word => wordsList.insertLast(word))
       res.json(wordsList.head.value)
-    })
-    .catch(next)
-    console.log('before wordsList: ')
-    wordsList.display()
+      next()
+    } catch(error) {
+      next(error)
+    }
   })
 //compareToAnswer
 languageRouter
   .post('/guess', jsonBodyParser, async (req, res, next) => {
-    
   try{
+    if(!req.body.guess) {
+      return res.status(400).json({
+        error: `Missing 'guess' in request body`
+      })
+    }
     const {guess} = req.body
     const answer= await LanguageService.getAnswer(req.app.get('db'), req.language.id)
-    
-    
     const newAns= await  LanguageService.compareToAnswer(guess, answer[0])
-      //console.log('new Ans',newAns)
-      await LanguageService.updateWordScore(req.app.get('db'), req.language.id, newAns)
-      await LanguageService.updateLanguageScore(req.app.get('db'), req.language.id, newAns)
-      // await LanguageService.changeWord(wordsList, newAns) //we are here
+      
+      LanguageService.updateWordScore(req.app.get('db'), req.language.id, newAns)
+      LanguageService.updateLanguageScore(req.app.get('db'), req.language.id, newAns)
+      //await LanguageService.changeWord(wordsList, newAns) //we are here
       const {memory_value} = newAns //places to move --> integer
-      console.log('memory_value: ', memory_value)
+      //console.log('head: ', wordsList.head)
       const newNode = {
-        nextWord: wordsList.head.value.nextWord,//original word
+        nextWord: wordsList.head.value.nextWord, //original word
         wordCorrectCount: newAns.wordCorrectCount,
         wordIncorrectCount: newAns.wordIncorrectCount,
         totalScore: newAns.totalScore
       };
-      console.log('newNode: ', newNode)
+      //console.log('newNode: ', newNode)
+      //console.log('new Ans before moving',newAns)
       wordsList.insertAt(newNode, wordsList, memory_value)
       wordsList.remove(wordsList.head.value)
-      console.log('after wordsList: ')
-      wordsList.display()
+      //console.log('new Ans after moving', wordsList.find('elefante'))
+      //map through words list out here, running updateWords for each word...
+      while(wordsList.head.next !== null) {
+        await LanguageService.updateWordPosition(req.app.get('db'), req.language.id, wordsList.head.value.nextWord, wordsList.head.next.value.nextWord)
+        wordsList.head = wordsList.head.next
+      }
+    
+      //console.log('after wordsList =======================')
+      //wordsList.display()
       // console.log('newAsns: ', newAns)
-
-      res.status(200).json(newAns)
+      const sendBack = wordsList.find(`${newNode.nextWord}`)
+      res.status(200).json(sendBack)
       next()
   }
     catch (error) {
       next(error)
     }
-
-  
   })
 
 module.exports = languageRouter
