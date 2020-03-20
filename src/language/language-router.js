@@ -1,7 +1,7 @@
 const express = require('express')
 const LanguageService = require('./language-service')
 const { requireAuth } = require('../middleware/jwt-auth')
-const {LinkedList} = require('../middleware/linkedList')
+const {LinkedList} = require('../middleware/linkedlist')
 
 const languageRouter = express.Router()
 const wordsList = new LinkedList()
