@@ -64,7 +64,7 @@ class LinkedList {
   display(){
     let tempNode = this.head
     while(tempNode !== null) {
-      console.log(tempNode)
+      //console.log(tempNode)
       tempNode = tempNode.next
     }
   }

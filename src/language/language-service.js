@@ -112,7 +112,7 @@ const LanguageService = {
   compareToAnswer(guess, ans) {
     let guessLC = guess.toLowerCase()
     let newAns = ans
-    console.log('ANS: ', ans)
+    //console.log('ANS: ', ans)
     if(guessLC === ans.answer){
       newAns.memory_value = newAns.memory_value * 2
       newAns.isCorrect=true

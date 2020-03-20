@@ -5,7 +5,7 @@ module.exports = {
   TEST_DATABASE_URL: process.env.TEST_DATABASE_URL || 'postgresql://dunder-mifflin@localhost/spaced-repetition-test',
   JWT_SECRET: process.env.JWT_SECRET || 'change-this-secret',
   JWT_EXPIRY: process.env.JWT_EXPIRY || '3h',
-  CLIENT_ORIGIN: process.env.CLIENT_ORIGIN || 'https://spanimals.now.sh'
+  CLIENT_ORIGIN: process.env.CLIENT_ORIGIN || 'http://localhost:3000'
 }
 //https://spanimal.herokuapp.com/
 
